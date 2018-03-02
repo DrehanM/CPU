@@ -8,26 +8,46 @@ set python27path="null"
 
 
 ::Leave this alone
+set defname=python2.7
 set defpy="C:\Python27\python.exe"
 
 copy alu.circ tests>nul
 IF %ERRORLEVEL% NEQ 0 (
     echo.
-  ECHO [ERROR] Copy failed: alu.circ to tests! Exiting...
-  goto end
+    ECHO [ERROR] Copy failed: alu.circ to tests!
+    if exist tests/alu.circ echo Found an alu.circ file in the test folder already. &goto choicea
+    goto end
+    :choicea
+    set /P c=Do you want to use it [Y/N]?
+    if /I "%c%" EQU "Y" goto :cpreg
+    if /I "%c%" EQU "N" goto :end
+    echo Please only enter y or n!
+    echo.
+    goto :choicea
 )
+:cpreg
 copy regfile.circ tests>nul
 IF %ERRORLEVEL% NEQ 0 (
     echo.
-  ECHO [ERROR] Copy failed: regfile.circ to tests! Exiting...
-  goto end
+  ECHO [ERROR] Copy failed: regfile.circ to tests!
+  if exist tests/regfile.circ echo Found an regfile.circ file in the test folder already. &goto choiceb
+    goto end
+    :choiceb
+    set /P c=Do you want to use it [Y/N]?
+    if /I "%c%" EQU "Y" goto :next
+    if /I "%c%" EQU "N" goto :end
+    echo Please only enter y or n!
+    echo.
+    goto :choiceb
 )
+:next
 cd tests
 ::Determining python location
-where python2.7>nul
+where %defname%>nul
 IF %ERRORLEVEL% NEQ 0 goto DefaultLocation
 :inPath
-pythons2.7 sanity_test.py
+echo Python 2.7 found in path!
+%defname% sanity_test.py
 goto end
 :DefaultLocation
 ECHO [Warning] Python 2.7 is not in the path! Checking alternative locations...
