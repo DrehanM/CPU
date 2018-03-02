@@ -14,6 +14,7 @@ file_locations = os.path.expanduser(os.getcwd())
 logisim_location = os.path.join(os.getcwd(),"logisim.jar")
 
 create = 0
+debug = False
 
 if create:
   new = open('new.out', 'w')
@@ -30,14 +31,30 @@ class TestCase():
 
   def __call__(self):
     output = tempfile.TemporaryFile(mode='r+')
+    try:
+        stdinf = open('/dev/null')
+    except Exception as e:
+        if debug:
+            print "/dev/null not found, attempting different dir.."
+        try:
+            stdinf = open('nul')
+            if debug:
+                print "nul dir works!"
+        except Exception as e:
+            print "The no nul directories. Program will most likeley error now."
+    
     proc = subprocess.Popen(["java","-jar",logisim_location,"-tty","table",self.circfile],
-                            stdin=open('/dev/null'),
+                            stdin=stdinf,
                             stdout=subprocess.PIPE)
     try:
       reference = open(self.tracefile)
       passed = compare_unbounded(proc.stdout,reference)
     finally:
-      os.kill(proc.pid,signal.SIGTERM)
+      try:
+        os.kill(proc.pid,signal.SIGTERM)
+      except Exception as e:
+         if debug:
+            print "Could not kill process! Perhaps it closed itself?"
     if passed:
       return (True, "Matched expected output")
     else:
@@ -46,8 +63,8 @@ class TestCase():
 def compare_unbounded(student_out, reference_out):
   passed = True
   while True:
-    line1 = student_out.readline()
-    line2 = reference_out.readline()
+    line1 = student_out.readline().rstrip()
+    line2 = reference_out.readline().rstrip()
     if line2 == '':
       break
     if create:
@@ -64,7 +81,6 @@ def run_tests(tests):
   print "Testing files..."
   tests_passed = 0
   tests_failed = 0
-
   for description,test in tests:
     test_passed, reason = test()
     if test_passed:
