@@ -1,0 +1,15 @@
+	sanity PASSED test: Single-cycle CPU add/lui/sll test
+	sanity PASSED test: Single-cycle CPU memory test
+	sanity PASSED test: Single-cycle CPU branch test
+	sanity PASSED test: Single-cycle CPU jump test
+	sanity PASSED test: Single-cycle CPU swge test
+	sanity PASSED test: Single-cycle CPU br_jalr test
+
+
+sanity: 6/6 (6/6 tests passed, 0 partially)
+	Passed test "Single-cycle CPU add/lui/sll test" worth 1 points.
+	Passed test "Single-cycle CPU memory test" worth 1 points.
+	Passed test "Single-cycle CPU branch test" worth 1 points.
+	Passed test "Single-cycle CPU jump test" worth 1 points.
+	Passed test "Single-cycle CPU swge test" worth 1 points.
+	Passed test "Single-cycle CPU br_jalr test" worth 1 points.
